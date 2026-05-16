@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -34,6 +35,10 @@ export default function RootLayout({
         <footer className="mt-24 py-8 text-center text-sm"
           style={{ borderTop: "1px solid rgba(255,255,255,0.05)", color: "var(--muted)" }}>
           © {new Date().getFullYear()} ZipZop.tools — Free online file tools. Files never leave your device.
+          <span className="mx-3 opacity-30">·</span>
+          <Link href="/privacy" style={{ color: "var(--muted)" }} className="hover:text-white transition-colors">
+            Privacy Policy
+          </Link>
         </footer>
       </body>
     </html>

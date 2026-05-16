@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import AdBanner from "@/components/AdBanner";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -756,6 +757,8 @@ export default function ClientToolPage({ toolType }: { toolType: string }) {
           </button>
         )}
       </form>
+
+      <AdBanner slot="tool-page-bottom" format="horizontal" className="mt-12" />
     </div>
   );
 }

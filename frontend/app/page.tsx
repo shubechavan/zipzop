@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdBanner from "@/components/AdBanner";
 
 const TOOLS = [
   {
@@ -96,6 +97,9 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      {/* Ad banner */}
+      <AdBanner slot="homepage-top" format="horizontal" className="mb-16" />
 
       {/* Tool sections */}
       {TOOLS.map((section) => (
