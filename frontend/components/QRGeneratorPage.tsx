@@ -32,49 +32,81 @@ export default function QRGeneratorPage() {
     });
   };
 
-  return (
-    <div className="mx-auto max-w-2xl px-6 py-14">
-      <h1 className="text-3xl font-black text-white mb-2">QR Code Generator</h1>
-      <p className="text-[#888899] mb-10">Type any text, URL, or phone number — get a QR code instantly.</p>
+  const inputStyle = {
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    color: "#e8e8f0",
+    borderRadius: "10px",
+    fontSize: "0.875rem",
+    outline: "none",
+    width: "100%",
+  };
 
-      <div className="space-y-6">
-        <div className="rounded-xl border border-[#2a2a35] bg-[#18181f] p-5 space-y-4">
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-16">
+      <div className="mb-10">
+        <div className="section-label mb-3">Utility</div>
+        <h1 className="text-3xl font-black text-white mb-2 tracking-tight">QR Code Generator</h1>
+        <p style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
+          Type any text, URL, or phone number and get a QR code instantly.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {/* Input options */}
+        <div className="glass p-5 space-y-4">
           <div>
-            <label className="text-sm text-[#888899] block mb-2">Text / URL</label>
+            <label className="text-sm block mb-2" style={{ color: "var(--muted)" }}>Text / URL</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="https://example.com or any text…"
               rows={3}
-              className="w-full rounded-lg border border-[#2a2a35] bg-[#0f0f13] text-white text-sm px-3 py-2 resize-none focus:border-[#6c63ff] outline-none transition-colors"
+              style={{ ...inputStyle, padding: "0.75rem", resize: "none" }}
             />
           </div>
           <div className="flex items-center justify-between">
-            <label className="text-sm text-[#888899]">Size (px)</label>
+            <label className="text-sm" style={{ color: "var(--muted)" }}>Size</label>
             <select value={size} onChange={(e) => setSize(Number(e.target.value))}
-              className="rounded-lg border border-[#2a2a35] bg-[#0f0f13] text-white text-sm px-3 py-1.5">
-              <option value={200}>200×200</option>
-              <option value={300}>300×300</option>
-              <option value={500}>500×500</option>
-              <option value={1000}>1000×1000 (high-res)</option>
+              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#e8e8f0", borderRadius: "10px", fontSize: "0.875rem", padding: "0.4rem 0.75rem", outline: "none" }}>
+              <option value={200}>200 × 200</option>
+              <option value={300}>300 × 300</option>
+              <option value={500}>500 × 500</option>
+              <option value={1000}>1000 × 1000 — high-res</option>
             </select>
           </div>
         </div>
 
         {/* Preview */}
-        <div className="rounded-xl border border-[#2a2a35] bg-white flex items-center justify-center min-h-[200px]">
-          {loading && <span className="text-gray-400 text-sm">Generating…</span>}
-          {!loading && dataUrl && <img src={dataUrl} alt="QR code" className="max-w-full" style={{ imageRendering: "pixelated" }} />}
-          {!loading && !dataUrl && <span className="text-gray-400 text-sm">QR preview will appear here</span>}
+        <div className="glass flex items-center justify-center min-h-[260px] rounded-2xl overflow-hidden">
+          {loading && (
+            <span className="text-sm" style={{ color: "var(--muted)" }}>Generating…</span>
+          )}
+          {!loading && dataUrl && (
+            <img src={dataUrl} alt="QR code" className="rounded-xl" style={{ maxWidth: "240px", imageRendering: "pixelated" }} />
+          )}
+          {!loading && !dataUrl && (
+            <div className="text-center">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"
+                style={{ color: "var(--muted)", margin: "0 auto 10px" }}>
+                <rect x="2" y="2" width="8" height="8" rx="1" /><rect x="14" y="2" width="8" height="8" rx="1" />
+                <rect x="2" y="14" width="8" height="8" rx="1" /><rect x="14" y="14" width="3" height="3" rx="0.5" />
+                <rect x="19" y="14" width="3" height="3" rx="0.5" /><rect x="14" y="19" width="3" height="3" rx="0.5" />
+                <rect x="19" y="19" width="3" height="3" rx="0.5" />
+              </svg>
+              <span className="text-sm" style={{ color: "var(--muted)" }}>QR preview appears here</span>
+            </div>
+          )}
         </div>
 
         {dataUrl && (
           <div className="flex gap-3">
-            <button onClick={() => download("png")} className="btn-primary flex-1 text-center">
+            <button onClick={() => download("png")} className="btn-primary flex-1 text-center" style={{ padding: "0.8rem" }}>
               Download PNG
             </button>
             <button onClick={() => download("svg")}
-              className="flex-1 rounded-lg border border-[#2a2a35] text-[#888899] hover:text-white text-sm font-semibold transition-colors">
+              className="flex-1 text-sm font-semibold rounded-xl transition-colors"
+              style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--muted)", padding: "0.8rem" }}>
               Download SVG
             </button>
           </div>

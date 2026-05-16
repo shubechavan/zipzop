@@ -31,8 +31,9 @@ export default function RootLayout({
         )}
         <Navbar />
         <main>{children}</main>
-        <footer className="border-t border-[#2a2a35] mt-24 py-8 text-center text-sm text-[#888899]">
-          © {new Date().getFullYear()} ZipZop.tools · Free online file tools
+        <footer className="mt-24 py-8 text-center text-sm"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)", color: "var(--muted)" }}>
+          © {new Date().getFullYear()} ZipZop.tools — Free online file tools. Files never leave your device.
         </footer>
       </body>
     </html>

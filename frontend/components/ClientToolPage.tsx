@@ -614,15 +614,29 @@ export default function ClientToolPage({ toolType }: { toolType: string }) {
     a.download = `${stem}.txt`; a.click();
   };
 
-  return (
-    <div className="mx-auto max-w-2xl px-6 py-14">
-      <h1 className="text-3xl font-black text-white mb-2">{title}</h1>
-      <p className="text-[#888899] mb-10">{description}</p>
+  const inputStyle = {
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    color: "#e8e8f0",
+    borderRadius: "10px",
+    fontSize: "0.875rem",
+    padding: "0.4rem 0.75rem",
+    outline: "none",
+  };
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-16">
+      {/* Header */}
+      <div className="mb-10">
+        <div className="section-label mb-3">Tool</div>
+        <h1 className="text-3xl font-black text-white mb-2 tracking-tight">{title}</h1>
+        <p style={{ color: "var(--muted)", fontSize: "0.95rem" }}>{description}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Drop zone */}
         <div
-          className={`drop-zone flex flex-col items-center justify-center gap-3 py-14 text-center ${dragging ? "active" : ""}`}
+          className={`drop-zone flex flex-col items-center justify-center gap-4 py-16 text-center ${dragging ? "active" : ""}`}
           onClick={() => fileRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
@@ -631,39 +645,47 @@ export default function ClientToolPage({ toolType }: { toolType: string }) {
           <input ref={fileRef} type="file" accept={accept} multiple={multiple} className="hidden"
             onChange={(e) => addFiles(e.target.files)} />
           {files.length > 0 ? (
-            <div className="space-y-1 max-h-40 overflow-y-auto px-4">
-              {files.map((f) => <div key={f.name} className="text-sm font-medium text-[#6c63ff]">{f.name}</div>)}
+            <div className="space-y-1.5 max-h-40 overflow-y-auto px-4">
+              {files.map((f) => (
+                <div key={f.name} className="text-sm font-medium" style={{ color: "var(--accent)" }}>{f.name}</div>
+              ))}
             </div>
           ) : (
             <>
-              <div className="text-4xl">☁️</div>
-              <div className="text-white font-semibold">Drop file here or click to browse</div>
-              <div className="text-xs text-[#888899]">{accept.split(",").slice(0, 4).join(" · ")}</div>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--muted)" }}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <div>
+                <div className="text-white font-semibold text-sm">Drop file here or click to browse</div>
+                <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{accept.split(",").slice(0, 4).join("  ·  ")}</div>
+              </div>
             </>
           )}
         </div>
 
         {/* Options */}
         {fields.length > 0 && (
-          <div className="rounded-xl border border-[#2a2a35] bg-[#18181f] p-5 space-y-4">
+          <div className="glass p-5 space-y-4">
             {fields.map((f) => (
               <div key={f.name} className="flex items-center justify-between gap-4">
-                <label className="text-sm text-[#888899]">{f.label}</label>
+                <label className="text-sm" style={{ color: "var(--muted)" }}>{f.label}</label>
                 {f.type === "select" && (
                   <select value={String(values[f.name] ?? "")} onChange={(e) => setValue(f.name, e.target.value)}
-                    className="rounded-lg border border-[#2a2a35] bg-[#0f0f13] text-white text-sm px-3 py-1.5">
+                    style={inputStyle}>
                     {f.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 )}
                 {f.type === "number" && (
                   <input type="number" value={Number(values[f.name] ?? 0)} min={f.min} max={f.max}
                     onChange={(e) => setValue(f.name, Number(e.target.value))}
-                    className="w-28 rounded-lg border border-[#2a2a35] bg-[#0f0f13] text-white text-sm px-3 py-1.5" />
+                    style={{ ...inputStyle, width: "7rem" }} />
                 )}
                 {f.type === "text" && (
                   <input type="text" value={String(values[f.name] ?? "")} placeholder="…"
                     onChange={(e) => setValue(f.name, e.target.value)}
-                    className="w-44 rounded-lg border border-[#2a2a35] bg-[#0f0f13] text-white text-sm px-3 py-1.5" />
+                    style={{ ...inputStyle, width: "11rem" }} />
                 )}
                 {f.type === "checkbox" && (
                   <input type="checkbox" checked={Boolean(values[f.name])}
@@ -675,43 +697,61 @@ export default function ClientToolPage({ toolType }: { toolType: string }) {
           </div>
         )}
 
-        {error && <p className="text-sm text-red-400 bg-red-950/30 border border-red-900 rounded-lg px-4 py-3">{error}</p>}
-        {loading && <div className="text-sm text-[#6c63ff] bg-[#6c63ff]/10 border border-[#6c63ff]/20 rounded-lg px-4 py-3">⏳ {status}</div>}
+        {/* Status / Error */}
+        {error && (
+          <div className="text-sm rounded-xl px-4 py-3"
+            style={{ color: "#f87171", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
+            {error}
+          </div>
+        )}
+        {loading && (
+          <div className="text-sm rounded-xl px-4 py-3 flex items-center gap-3"
+            style={{ color: "var(--accent)", background: "rgba(108,99,255,0.08)", border: "1px solid rgba(108,99,255,0.2)" }}>
+            <span className="inline-block w-3 h-3 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+            {status}
+          </div>
+        )}
 
         {/* Text result */}
         {textResult && (
           <div className="space-y-3">
             <textarea readOnly value={textResult} rows={10}
-              className="w-full rounded-xl border border-[#2a2a35] bg-[#0f0f13] text-[#e8e8f0] text-sm p-4 resize-y font-mono" />
+              className="w-full resize-y font-mono text-sm"
+              style={{ ...inputStyle, padding: "1rem", width: "100%", borderRadius: "12px" }} />
             <div className="flex gap-3">
               <button type="button" onClick={copyText} className="btn-primary">
                 {copied ? "Copied!" : "Copy text"}
               </button>
               <button type="button" onClick={downloadText}
-                className="rounded-lg border border-[#2a2a35] text-[#888899] hover:text-white px-4 py-2 text-sm transition-colors">
+                className="text-sm px-4 py-2 rounded-lg transition-colors"
+                style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--muted)" }}>
                 Download .txt
               </button>
               <button type="button" onClick={reset}
-                className="ml-auto rounded-lg border border-[#2a2a35] text-[#888899] hover:text-white px-4 py-2 text-sm transition-colors">
+                className="ml-auto text-sm px-4 py-2 rounded-lg transition-colors"
+                style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--muted)" }}>
                 New file
               </button>
             </div>
           </div>
         )}
 
-        {/* Download result */}
+        {/* Success */}
         {done && !textResult && (
           <div className="flex gap-3">
-            <div className="flex-1 rounded-xl bg-green-900/30 border border-green-700 text-green-400 text-sm font-medium py-3 text-center">
-              ✓ Download started!
+            <div className="flex-1 rounded-xl text-sm font-medium py-3 text-center"
+              style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", color: "#4ade80" }}>
+              Download started
             </div>
             <button type="button" onClick={reset} className="btn-primary">Process another</button>
           </div>
         )}
 
+        {/* Submit */}
         {!done && (
           <button type="submit" disabled={loading || files.length < minFiles}
-            className="btn-primary w-full text-center disabled:opacity-40 disabled:cursor-not-allowed">
+            className="btn-primary w-full text-center"
+            style={{ padding: "0.8rem", fontSize: "0.95rem" }}>
             {loading ? (status || "Processing…") : "Process & Download"}
           </button>
         )}
