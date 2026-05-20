@@ -36,6 +36,8 @@ type ToolConfig = {
   minFiles?: number;
   fields?: FieldDef[];
   process: ProcessFn;
+  howTo?: string[];
+  faq?: { q: string; a: string }[];
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -66,6 +68,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const compressed = await imageCompression(file, opts);
       return { blob: compressed, filename: file.name.replace(/\.[^.]+$/, "") + "_compressed.jpg" };
     },
+    howTo: [
+      "Upload a JPG, PNG, or WebP image.",
+      "Set a quality level (1–100) or a target file size in KB.",
+      "Click Process — your compressed image downloads instantly.",
+    ],
+    faq: [
+      { q: "Will compressing reduce image quality?", a: "At quality 70–85 the difference is invisible to the eye. Below 50 you may notice artifacts on detailed photos." },
+      { q: "What formats are supported?", a: "JPG, PNG, and WebP. The output is always saved as JPG for maximum compression." },
+      { q: "Is there a file size limit?", a: "No limit — everything runs in your browser so large files are fine." },
+    ],
   },
 
   "resize-image": {
@@ -96,6 +108,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), mime, 0.92));
       return { blob, filename: `${file.name.replace(/\.[^.]+$/, "")}_${w}x${h}.${ext}` };
     },
+    howTo: [
+      "Upload your image (JPG, PNG, WebP, or GIF).",
+      "Enter the target width or height in pixels. Set the other to 0 to auto-scale.",
+      "Enable 'Maintain aspect ratio' to avoid stretching, then click Process.",
+    ],
+    faq: [
+      { q: "Can I resize without distorting the image?", a: "Yes — enable 'Maintain aspect ratio' and set only one dimension. The other is calculated automatically." },
+      { q: "What is the maximum output size?", a: "There is no hard limit, but very large outputs (e.g. 8000×8000) may take a few seconds." },
+      { q: "Does resizing up-scale the image?", a: "Yes, but enlarging a small image will reduce sharpness. Use the Image Upscaler tool for better results when enlarging." },
+    ],
   },
 
   "convert-image": {
@@ -119,6 +141,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), mime, 0.92));
       return { blob, filename: `${files[0].name.replace(/\.[^.]+$/, "")}.${fmt}` };
     },
+    howTo: [
+      "Upload your image in any common format (JPG, PNG, WebP, GIF, BMP).",
+      "Choose the target format: JPG, PNG, or WebP.",
+      "Click Process — the converted file downloads immediately.",
+    ],
+    faq: [
+      { q: "When should I use WebP instead of JPG?", a: "WebP offers better compression than JPG at the same quality — ideal for websites. Not all older software supports it." },
+      { q: "Will converting JPG to PNG make it higher quality?", a: "No. Converting from a lossy format (JPG) to a lossless one (PNG) does not recover lost data. The file will just be larger." },
+      { q: "Can I batch convert multiple images?", a: "Currently one image at a time. Batch support is coming soon." },
+    ],
   },
 
   "passport-photo": {
@@ -159,6 +191,17 @@ const TOOLS: Record<string, ToolConfig> = {
       const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), "image/jpeg", 0.95));
       return { blob, filename: `passport_${values.preset}mm.jpg` };
     },
+    howTo: [
+      "Upload a clear, front-facing photo with your face fully visible.",
+      "Select the size preset for your country or visa type.",
+      "Choose 300 DPI for standard printing or 600 DPI for high-quality prints.",
+      "Click Process — the photo is cropped and resized to the exact dimensions.",
+    ],
+    faq: [
+      { q: "Which preset should I use for an Indian passport?", a: "Select '35×45 mm — India / most visas'. This is the standard size required by the Indian passport authority." },
+      { q: "Does it automatically center my face?", a: "The tool center-crops the image to the target aspect ratio. Make sure your face is centered in the original photo for best results." },
+      { q: "What DPI should I print at?", a: "300 DPI is the standard for passport photos. 600 DPI is only needed for professional lab printing." },
+    ],
   },
 
   "remove-background": {
@@ -172,6 +215,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const blob = await removeBackground(files[0]);
       return { blob, filename: files[0].name.replace(/\.[^.]+$/, "") + "_nobg.png" };
     },
+    howTo: [
+      "Upload a JPG, PNG, or WebP image with a clear subject.",
+      "Click Process — the AI model loads and removes the background automatically.",
+      "Download the result as a transparent PNG.",
+    ],
+    faq: [
+      { q: "Does the AI model upload my image to a server?", a: "No. The AI model runs entirely inside your browser using WebAssembly. Your image never leaves your device." },
+      { q: "Why does the first run take longer?", a: "The AI model (~40 MB) is downloaded and cached on the first use. Subsequent uses are instant." },
+      { q: "What types of images work best?", a: "Images with a clear contrast between the subject and background work best. Complex backgrounds like forests or crowds may have imperfect edges." },
+    ],
   },
 
   "image-upscale": {
@@ -199,6 +252,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), mime, 0.95));
       return { blob, filename: `${files[0].name.replace(/\.[^.]+$/, "")}_${scale}x.${ext}` };
     },
+    howTo: [
+      "Upload a JPG, PNG, or WebP image.",
+      "Choose 2× to double the size or 4× to quadruple it.",
+      "Click Process — the enlarged image downloads instantly.",
+    ],
+    faq: [
+      { q: "Will upscaling add detail that wasn't there?", a: "No — upscaling interpolates pixels smoothly to avoid blurriness, but it cannot invent detail. For AI-powered detail enhancement, dedicated super-resolution tools are needed." },
+      { q: "Is 4× upscaling suitable for printing?", a: "It depends on the original resolution. A 500×500 image upscaled 4× becomes 2000×2000 — good enough for a 6×6 inch print at 300 DPI." },
+      { q: "What happens to transparent PNGs?", a: "Transparency is preserved in the output PNG." },
+    ],
   },
 
   "image-to-text": {
@@ -227,6 +290,16 @@ const TOOLS: Record<string, ToolConfig> = {
       });
       return { text: data.text.trim(), filename: files[0].name.replace(/\.[^.]+$/, "") + ".txt" };
     },
+    howTo: [
+      "Upload a photo, screenshot, or scanned document.",
+      "Select the language of the text in the image.",
+      "Click Process — the extracted text appears on screen. Copy or download as .txt.",
+    ],
+    faq: [
+      { q: "What languages are supported?", a: "Currently English, Hindi, and a combined English + Hindi mode. More languages can be added on request." },
+      { q: "Does my image get uploaded anywhere?", a: "No — OCR runs fully in your browser using Tesseract.js (WebAssembly). Nothing is sent to a server." },
+      { q: "What makes OCR accuracy worse?", a: "Low resolution images, handwriting, decorative fonts, and images with heavy background patterns all reduce accuracy. Use at least 150 DPI scans for best results." },
+    ],
   },
 
   "qr-read": {
@@ -246,6 +319,16 @@ const TOOLS: Record<string, ToolConfig> = {
       if (!code) throw new Error("No QR code found in this image.");
       return { text: code.data, filename: "qr_decoded.txt" };
     },
+    howTo: [
+      "Upload any image containing a QR code (JPG, PNG, WebP, or GIF).",
+      "Click Process — the QR code is decoded instantly.",
+      "The decoded text or URL appears on screen. Copy or download it.",
+    ],
+    faq: [
+      { q: "What if it says 'No QR code found'?", a: "Make sure the QR code is clearly visible, not blurry, and not cut off. Try cropping the image closer to the QR code." },
+      { q: "Can it decode QR codes from screenshots?", a: "Yes — screenshots work perfectly as long as the QR code is not rotated at an extreme angle or heavily distorted." },
+      { q: "Does it work on QR codes with logos in the center?", a: "Usually yes. QR codes have built-in error correction that allows up to 30% of the pattern to be obscured." },
+    ],
   },
 
   "image-to-pdf": {
@@ -267,6 +350,16 @@ const TOOLS: Record<string, ToolConfig> = {
       setStatus("Saving PDF…");
       return { blob: pdfBlob(await doc.save()), filename: "images.pdf" };
     },
+    howTo: [
+      "Upload one or more JPG or PNG images.",
+      "Reorder them if needed — the order you select is the order they appear in the PDF.",
+      "Click Process — a single PDF containing all images downloads instantly.",
+    ],
+    faq: [
+      { q: "Is there a limit to how many images I can combine?", a: "No hard limit — the tool processes entirely in your browser. Very large batches (50+ images) may take a minute." },
+      { q: "Each image becomes one page?", a: "Yes. Each image is placed on its own page, sized to exactly fit the image dimensions." },
+      { q: "Can I combine JPG and PNG together?", a: "Yes, you can mix JPG and PNG files in the same batch." },
+    ],
   },
 
   "favicon-generator": {
@@ -292,6 +385,17 @@ const TOOLS: Record<string, ToolConfig> = {
       setStatus("Zipping…");
       return { blob: await zip.generateAsync({ type: "blob" }), filename: "favicons.zip" };
     },
+    howTo: [
+      "Upload a square or near-square image — a logo works best.",
+      "Click Process — all standard favicon sizes (16×16 to 256×256) are generated.",
+      "Download the ZIP, extract it, and place the PNG files in your website's root directory.",
+      "Copy the HTML snippet from the included favicon.html file into your site's <head>.",
+    ],
+    faq: [
+      { q: "Which sizes are generated?", a: "16×16, 32×32, 48×48, 64×64, 128×128, and 256×256 — all as PNG files. An HTML snippet is included." },
+      { q: "Do I need an ICO file?", a: "Modern browsers fully support PNG favicons. The 32×32 PNG works as a drop-in replacement for favicon.ico on all current browsers." },
+      { q: "Should I use a transparent background?", a: "Yes — upload a PNG with a transparent background for best results on both light and dark browser tabs." },
+    ],
   },
 
   "video-to-gif": {
@@ -348,6 +452,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const stem = files[0].name.replace(/\.[^.]+$/, "");
       return { blob: new Blob([encoder.bytes()], { type: "image/gif" }), filename: `${stem}.gif` };
     },
+    howTo: [
+      "Upload an MP4, WebM, or OGG video file.",
+      "Set the frame rate (FPS), output width, and maximum duration.",
+      "Click Process — frames are captured and encoded into a GIF in your browser.",
+    ],
+    faq: [
+      { q: "How do I keep the GIF file size small?", a: "Lower the FPS (8–12 is ideal for most GIFs), reduce the output width, and keep the duration under 5 seconds." },
+      { q: "Why does it only convert the first few seconds?", a: "GIFs get very large very quickly. The max duration setting prevents accidentally creating a 50 MB file." },
+      { q: "Does it upload the video to a server?", a: "No — the entire conversion happens in your browser. No data is sent anywhere." },
+    ],
   },
 
   // ── PDF ────────────────────────────────────────────────────────────────────
@@ -362,6 +476,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const pdf = await PDFDocument.load(await files[0].arrayBuffer());
       return { blob: pdfBlob(await pdf.save({ useObjectStreams: true })), filename: files[0].name.replace(/\.[^.]+$/, "") + "_compressed.pdf" };
     },
+    howTo: [
+      "Upload your PDF file.",
+      "Click Process — redundant data is removed and the PDF is re-saved.",
+      "The compressed file downloads automatically.",
+    ],
+    faq: [
+      { q: "How much smaller will the PDF get?", a: "It depends on how the PDF was originally created. PDFs with embedded fonts and metadata can shrink 10–40%. Scanned image PDFs will not compress much." },
+      { q: "Will compression affect the quality?", a: "No — this tool uses lossless compression. Text, fonts, and images are not degraded." },
+      { q: "My PDF didn't get smaller — why?", a: "It may already be optimised, or it may contain mostly scanned images. For image-heavy PDFs, consider reducing image DPI with external tools." },
+    ],
   },
 
   "merge-pdf": {
@@ -382,6 +506,16 @@ const TOOLS: Record<string, ToolConfig> = {
       setStatus("Saving…");
       return { blob: pdfBlob(await merged.save()), filename: "merged.pdf" };
     },
+    howTo: [
+      "Upload two or more PDF files.",
+      "They will be merged in the order you select them.",
+      "Click Process — the combined PDF downloads as merged.pdf.",
+    ],
+    faq: [
+      { q: "Is there a limit to how many PDFs I can merge?", a: "No — you can merge as many as you like. The process runs in your browser so very large batches may take longer." },
+      { q: "Can I reorder the PDFs before merging?", a: "The order depends on the order you select or drop the files. Select them in the order you want them to appear in the final PDF." },
+      { q: "Do the merged PDFs have to be the same size or orientation?", a: "No — each page keeps its original dimensions and orientation." },
+    ],
   },
 
   "split-pdf": {
@@ -433,6 +567,17 @@ const TOOLS: Record<string, ToolConfig> = {
       }
       return { blob: await zip.generateAsync({ type: "blob" }), filename: `${stem}_split.zip` };
     },
+    howTo: [
+      "Upload a PDF file.",
+      "Choose 'All pages' to get one PDF per page, or 'Custom page range' to extract specific pages.",
+      "For a custom range, enter pages like '1-3,5,7-9'.",
+      "Click Process — the pages download as a ZIP archive.",
+    ],
+    faq: [
+      { q: "How do I extract just one page?", a: "Select 'Custom page range' and enter a single page number, e.g. '3'." },
+      { q: "Can I extract non-consecutive pages?", a: "Yes — use comma-separated values and ranges, e.g. '1,3,5-8,12'." },
+      { q: "Why is the result a ZIP file?", a: "When splitting into multiple pages, each becomes a separate PDF file. A ZIP keeps them together for easy download." },
+    ],
   },
 
   "pdf-to-images": {
@@ -473,6 +618,16 @@ const TOOLS: Record<string, ToolConfig> = {
       }
       return { blob: await zip.generateAsync({ type: "blob" }), filename: `${stem}_images.zip` };
     },
+    howTo: [
+      "Upload a PDF file.",
+      "Choose the output quality: 72 DPI for web previews, 150 DPI for standard, 300 DPI for print.",
+      "Click Process — each page is rendered as a JPG and all images are bundled in a ZIP.",
+    ],
+    faq: [
+      { q: "What DPI should I choose?", a: "150 DPI is good for most uses. Use 300 DPI only if you need to print the images — it produces much larger files." },
+      { q: "Will text still be readable in the output images?", a: "Yes, at 150 DPI text is clearly readable. At 72 DPI small text may appear slightly soft." },
+      { q: "Can I convert a single page instead of the whole PDF?", a: "Split the PDF first using the Split PDF tool, then convert the single-page PDF to an image." },
+    ],
   },
 
   "watermark-pdf": {
@@ -508,6 +663,17 @@ const TOOLS: Record<string, ToolConfig> = {
       }
       return { blob: pdfBlob(await doc.save()), filename: files[0].name.replace(/\.[^.]+$/, "") + "_watermarked.pdf" };
     },
+    howTo: [
+      "Upload a PDF file.",
+      "Type the watermark text (e.g. CONFIDENTIAL, DRAFT, your name).",
+      "Choose the opacity — light (10%) is subtle, heavy (50%) is clearly visible.",
+      "Click Process — the watermarked PDF downloads instantly.",
+    ],
+    faq: [
+      { q: "Is the watermark on every page?", a: "Yes — the watermark is applied diagonally to every page in the document." },
+      { q: "Can I remove the watermark later?", a: "The watermark is embedded into the PDF and cannot be removed by standard tools. Keep a copy of the original." },
+      { q: "Can I change the watermark color?", a: "Currently the watermark is grey. Custom colors are on the roadmap." },
+    ],
   },
 
   "rotate-pdf": {
@@ -534,6 +700,16 @@ const TOOLS: Record<string, ToolConfig> = {
       }
       return { blob: pdfBlob(await doc.save()), filename: files[0].name.replace(/\.[^.]+$/, "") + "_rotated.pdf" };
     },
+    howTo: [
+      "Upload a PDF file.",
+      "Choose the rotation angle: 90° clockwise, 180°, or 270° (counter-clockwise).",
+      "Click Process — all pages are rotated and the PDF downloads.",
+    ],
+    faq: [
+      { q: "Can I rotate only specific pages?", a: "Currently the tool rotates all pages by the same angle. Per-page rotation is on the roadmap." },
+      { q: "My PDF opens sideways in my viewer — how do I fix it?", a: "Upload it here and select 90° or 270° to correct the orientation." },
+      { q: "Does rotation affect the content quality?", a: "No — rotation changes only the page orientation metadata. No re-rendering or quality loss occurs." },
+    ],
   },
 
   // ── Word ───────────────────────────────────────────────────────────────────
@@ -548,6 +724,16 @@ const TOOLS: Record<string, ToolConfig> = {
       const result = await mammoth.extractRawText({ arrayBuffer: await files[0].arrayBuffer() });
       return { text: result.value, filename: files[0].name.replace(/\.[^.]+$/, "") + ".txt" };
     },
+    howTo: [
+      "Upload a .docx Word document.",
+      "Click Process — all text is extracted and displayed on screen.",
+      "Copy the text directly or download it as a .txt file.",
+    ],
+    faq: [
+      { q: "Does it support .doc (older Word format)?", a: "No — only .docx (Word 2007 and later) is supported. Open the file in Word and save as .docx first." },
+      { q: "Are tables and images extracted?", a: "Table cell text is extracted as plain text. Images are not included since this is a text extraction tool." },
+      { q: "Is the formatting preserved?", a: "No — the output is plain text only. Headings, bold, and other formatting are stripped." },
+    ],
   },
 };
 
@@ -759,6 +945,39 @@ export default function ClientToolPage({ toolType }: { toolType: string }) {
       </form>
 
       <AdBanner slot="tool-page-bottom" format="horizontal" className="mt-12" />
+
+      {/* How to use */}
+      {config.howTo && (
+        <div className="mt-16">
+          <h2 className="text-lg font-bold text-white mb-4">How to use</h2>
+          <ol className="space-y-3">
+            {config.howTo.map((step, i) => (
+              <li key={i} className="flex gap-3 text-sm" style={{ color: "#b0b0c0" }}>
+                <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{ background: "rgba(108,99,255,0.15)", color: "var(--accent)", border: "1px solid rgba(108,99,255,0.25)" }}>
+                  {i + 1}
+                </span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* FAQ */}
+      {config.faq && (
+        <div className="mt-12 mb-8">
+          <h2 className="text-lg font-bold text-white mb-4">Frequently asked questions</h2>
+          <div className="space-y-4">
+            {config.faq.map((item, i) => (
+              <div key={i} className="glass p-5 rounded-xl">
+                <div className="text-sm font-semibold text-white mb-1.5">{item.q}</div>
+                <div className="text-sm" style={{ color: "#b0b0c0" }}>{item.a}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
